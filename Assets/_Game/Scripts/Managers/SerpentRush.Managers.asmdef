@@ -1,0 +1,17 @@
+{
+    "name": "SerpentRush.Managers",
+    "rootNamespace": "SerpentRush.Managers",
+    "references": [
+        "SerpentRush.Core",
+        "SerpentRush.Gameplay"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

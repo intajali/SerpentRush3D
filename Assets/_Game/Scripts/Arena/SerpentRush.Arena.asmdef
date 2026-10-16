@@ -1,0 +1,16 @@
+{
+    "name": "SerpentRush.Arena",
+    "rootNamespace": "SerpentRush.Arena",
+    "references": [
+        "SerpentRush.Core"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

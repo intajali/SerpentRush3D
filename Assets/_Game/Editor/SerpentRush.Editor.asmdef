@@ -1,0 +1,19 @@
+{
+    "name": "SerpentRush.Editor",
+    "rootNamespace": "SerpentRush.EditorTools",
+    "references": [
+        "SerpentRush.Gameplay",
+        "SerpentRush.Managers"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

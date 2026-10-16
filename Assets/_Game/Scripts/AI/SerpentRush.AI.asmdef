@@ -1,0 +1,16 @@
+{
+    "name": "SerpentRush.AI",
+    "rootNamespace": "SerpentRush.AI",
+    "references": [
+        "SerpentRush.Core"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
