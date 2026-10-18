@@ -11,6 +11,8 @@ namespace SerpentRush.Gameplay
 
         bool LogStateTransitions { get; }
 
+        bool StartInPlaying { get; }
+
         float ArenaHalfExtent { get; }
 
         int SegmentPoolCapacity { get; }

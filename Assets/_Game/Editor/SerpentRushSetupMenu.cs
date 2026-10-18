@@ -101,6 +101,66 @@ namespace SerpentRush.EditorTools
                 AssetDatabase.CreateFolder("Assets/_Game", "Scenes");
         }
 
+        [MenuItem("Serpent Rush/Setup/Place Snake Head")]
+        public static void PlaceSnakeHead()
+        {
+            const string PrefabPath = "Assets/_Game/Prefabs/SnakeHead.prefab";
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath);
+            if (prefab == null)
+            {
+                Debug.LogError("[SerpentRush] Missing snake head prefab at " + PrefabPath);
+                return;
+            }
+
+            var existing = Object.FindAnyObjectByType<SnakeController>();
+            GameObject snakeObject;
+            if (existing != null)
+            {
+                snakeObject = existing.gameObject;
+            }
+            else
+            {
+                snakeObject = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
+                Undo.RegisterCreatedObjectUndo(snakeObject, "Place Snake Head");
+            }
+
+            var view = Camera.main;
+            if (view != null)
+            {
+                var follow = view.GetComponent<SnakeCameraFollow>();
+                if (follow == null)
+                    follow = Undo.AddComponent<SnakeCameraFollow>(view.gameObject);
+
+                var followObject = new SerializedObject(follow);
+                var targetProperty = followObject.FindProperty("_target");
+                if (targetProperty != null)
+                {
+                    targetProperty.objectReferenceValue = snakeObject.transform;
+                    followObject.ApplyModifiedPropertiesWithoutUndo();
+                }
+            }
+
+            var manager = Object.FindAnyObjectByType<GameManager>();
+            if (manager != null)
+            {
+                var link = manager.GetComponent<SnakeSessionLink>();
+                if (link == null)
+                    link = Undo.AddComponent<SnakeSessionLink>(manager.gameObject);
+
+                var serialized = new SerializedObject(link);
+                var snakeProperty = serialized.FindProperty("_snake");
+                if (snakeProperty != null)
+                {
+                    snakeProperty.objectReferenceValue = snakeObject.GetComponent<SnakeController>();
+                    serialized.ApplyModifiedPropertiesWithoutUndo();
+                }
+            }
+
+            EditorSceneManager.MarkSceneDirty(snakeObject.scene);
+            Selection.activeGameObject = snakeObject;
+            Debug.Log("[SerpentRush] Snake head is in the scene. Press Play, then steer with WASD or the arrow keys.");
+        }
+
         static void EnsureBootstrapIsFirstBuildScene()
         {
             var scenes = new List<EditorBuildSettingsScene>(EditorBuildSettings.scenes);

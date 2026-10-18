@@ -168,6 +168,9 @@ namespace SerpentRush.Managers
             }
 
             _bus.Publish(new GameStateChanged(previous, next));
+
+            if (previous == GameStateId.Bootstrap && next == GameStateId.MainMenu && _config.StartInPlaying)
+                QueueTransition(GameStateId.Playing);
         }
 
         readonly struct FlowStep

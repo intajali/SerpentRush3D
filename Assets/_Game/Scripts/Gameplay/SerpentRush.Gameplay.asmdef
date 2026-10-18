@@ -2,7 +2,8 @@
     "name": "SerpentRush.Gameplay",
     "rootNamespace": "SerpentRush.Gameplay",
     "references": [
-        "SerpentRush.Core"
+        "SerpentRush.Core",
+        "Unity.InputSystem"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

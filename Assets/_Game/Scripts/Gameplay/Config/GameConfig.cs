@@ -19,6 +19,9 @@ namespace SerpentRush.Gameplay
         [Tooltip("Writes allowed and rejected state changes to the Console.")]
         [SerializeField] bool _logStateTransitions = true;
 
+        [Tooltip("Starts the run after bootstrap. Turn this off when a menu screen is what starts the run.")]
+        [SerializeField] bool _startInPlaying = true;
+
         [Header("World")]
         [Tooltip("Half the arena width and depth in world units. Not read by gameplay yet.")]
         [SerializeField, Min(1f)] float _arenaHalfExtent = 25f;
@@ -35,6 +38,8 @@ namespace SerpentRush.Gameplay
         public int VSyncCount => _vSyncCount;
 
         public bool LogStateTransitions => _logStateTransitions;
+
+        public bool StartInPlaying => _startInPlaying;
 
         public float ArenaHalfExtent => _arenaHalfExtent;
 

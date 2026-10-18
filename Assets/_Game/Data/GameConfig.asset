@@ -15,6 +15,7 @@ MonoBehaviour:
   _targetFrameRate: 60
   _vSyncCount: 1
   _logStateTransitions: 1
+  _startInPlaying: 1
   _arenaHalfExtent: 25
   _segmentPoolCapacity: 64
   _pickupPoolCapacity: 32
