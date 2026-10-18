@@ -2,7 +2,9 @@
     "name": "SerpentRush.UI",
     "rootNamespace": "SerpentRush.UI",
     "references": [
-        "SerpentRush.Core"
+        "SerpentRush.Core",
+        "Unity.InputSystem",
+        "UnityEngine.UI"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

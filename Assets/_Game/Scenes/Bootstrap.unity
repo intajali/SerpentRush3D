@@ -363,7 +363,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1641775774}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 69f2c4f05907d76e35caf60c30fc5c54, type: 3}
   m_Name: 
@@ -717,6 +717,114 @@ MonoBehaviour:
   _prefab: {fileID: 420008, guid: 1a5372945c69f717fb2a008a400d02ba, type: 3}
   _growth: {fileID: 693683622}
   _snake: {fileID: 693683621}
+--- !u!1 &910100001
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 910100002}
+  - component: {fileID: 910100003}
+  m_Layer: 0
+  m_Name: Snake Camera Rig
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &910100002
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 910100001}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &910100003
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 910100001}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c7432e890d7932774d6e85a97cd4176, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _target: {fileID: 693683621}
+  _body: {fileID: 0}
+  _outputCamera: {fileID: 1641775776}
+  _cameraDistance: 9
+  _cameraHeight: 7
+  _maxCameraDistance: 16
+  _maxCameraHeight: 12
+  _segmentsForFullZoom: 40
+  _zoomSmoothTime: 0.6
+  _yawSharpness: 5
+  _positionDamping: {x: 0.05, y: 0.1, z: 0.05}
+  _aimDamping: {x: 0.25, y: 0.2}
+  _lookAhead: 6
+  _screenY: 0.12
+--- !u!1 &910200001
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 910200002}
+  - component: {fileID: 910200003}
+  m_Layer: 0
+  m_Name: Mobile Controls
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &910200002
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 910200001}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &910200003
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 910200001}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a473482314b1dda588a532acf9487b1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _controlPath: '<Gamepad>/leftStick'
+  _movementRange: 80
+  _stickSize: 180
+  _screenMargin: 56
+  _canvasSortingOrder: 5
+  _visible: 1
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -727,3 +835,5 @@ SceneRoots:
   - {fileID: 2030882775}
   - {fileID: 812440002}
   - {fileID: 825500002}
+  - {fileID: 910100002}
+  - {fileID: 910200002}

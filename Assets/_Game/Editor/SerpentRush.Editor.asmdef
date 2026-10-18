@@ -3,7 +3,8 @@
     "rootNamespace": "SerpentRush.EditorTools",
     "references": [
         "SerpentRush.Gameplay",
-        "SerpentRush.Managers"
+        "SerpentRush.Managers",
+        "SerpentRush.UI"
     ],
     "includePlatforms": [
         "Editor"

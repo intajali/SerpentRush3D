@@ -65,6 +65,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _movement: {fileID: 400003}
   _steerAction: {fileID: 0}
+  _controls: {fileID: -944628639613478452, guid: b200833fb9b9ac7b0e5e7d136b8f7c7b, type: 3}
   _viewCamera: {fileID: 0}
   _controlEnabled: 1
 --- !u!114 &400005

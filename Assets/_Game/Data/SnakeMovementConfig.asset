@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f0cf9bc82ff65dd883816b6d386cc77, type: 3}
   m_Name: SnakeMovementConfig
   m_EditorClassIdentifier: 
-  _forwardSpeed: 10
+  _forwardSpeed: 20
   _maxTurnDegreesPerSecond: 140
   _inputDeadzone: 0.15
   _cameraRelativeSteering: 1

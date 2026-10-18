@@ -13,8 +13,11 @@ namespace SerpentRush.Gameplay
     {
         [SerializeField] SnakeMovement _movement;
 
-        [Tooltip("Optional. When empty, WASD, arrow keys, and the left stick are used.")]
+        [Tooltip("Optional override. When assigned, this action is used instead of Controls.")]
         [SerializeField] InputActionReference _steerAction;
+
+        [Tooltip("Player/Steer on SnakeControls. WASD, arrows, and <Gamepad>/leftStick. Empty uses the same bindings in code.")]
+        [SerializeField] InputActionAsset _controls;
 
         [Tooltip("Optional. Camera Relative Steering uses this view. Falls back to Camera.main.")]
         [SerializeField] Camera _viewCamera;
@@ -36,14 +39,8 @@ namespace SerpentRush.Gameplay
             if (_movement == null)
                 _movement = GetComponent<SnakeMovement>();
 
-            if (_steerAction != null && _steerAction.action != null)
-            {
-                _input = new DeviceSteerInput(_steerAction.action);
-                return;
-            }
-
-            _ownedAction = SnakeSteerBindings.Create();
-            _input = new DeviceSteerInput(_ownedAction);
+            var action = ResolveAction();
+            _input = new DeviceSteerInput(action);
         }
 
         void OnEnable()
@@ -69,6 +66,22 @@ namespace SerpentRush.Gameplay
 
             var desired = SteerAim.ToWorld(_input.Read(), _movement.Config, ResolveView());
             _movement.Tick(desired, Time.deltaTime);
+        }
+
+        InputAction ResolveAction()
+        {
+            if (_steerAction != null && _steerAction.action != null)
+                return _steerAction.action;
+
+            if (_controls != null)
+            {
+                var found = _controls.FindAction("Player/Steer", false);
+                if (found != null)
+                    return found;
+            }
+
+            _ownedAction = SnakeSteerBindings.Create();
+            return _ownedAction;
         }
 
         Transform ResolveView()

@@ -49,9 +49,10 @@ Stopping Play restores `timeScale` to 1.
 ## Dependency rules
 
 - `SerpentRush.Core` references nothing in this project.
-- `SerpentRush.Gameplay` references Core only.
+- `SerpentRush.Gameplay` references Core, the Input System, and Cinemachine.
 - `SerpentRush.Managers` references Core and Gameplay. It is the only assembly that owns the flow.
-- `Arena`, `AI`, `UI`, and `Progression` reference Core only. Add `SerpentRush.Gameplay` when that module must publish flow events or read `GameConfig`. Do not reference `SerpentRush.Managers` from those modules.
+- `SerpentRush.UI` references Core, the Input System, and uGUI for the on-screen stick.
+- `Arena`, `AI`, and `Progression` reference Core only. Add `SerpentRush.Gameplay` when that module must publish flow events or read `GameConfig`. Do not reference `SerpentRush.Managers` from those modules.
 - `GameBootstrapper` is the composition root. It constructs `EventBus`, `StateMachine`, `GameFlowRules`, `UnityTimeControl`, `UnityRuntimeSettings`, and `GameStateFactory`, then passes those interfaces into `GameManager`.
 - UI buttons that cannot publish a struct can call the `Request` methods on the scene `Game` object. Other components on that object can publish through `GameManager.Events`.
 
@@ -66,7 +67,7 @@ Subscribe to `GameStateChanged` from `OnEnable` or `Start` on the bus stored in 
 1. Let the Editor import `com.unity.inputsystem` from `Packages/manifest.json`.
 2. Run **Serpent Rush > Setup > Place Snake Head**. This instances `Assets/_Game/Prefabs/SnakeHead.prefab` and, when `Game` is in the scene, adds **Snake Session Link** on `Game` with the head assigned.
 3. Press Play. The session enters Playing on its own, and the head starts moving forward.
-4. Steer with WASD or the arrow keys. Release the keys and it continues on its current heading. **Snake Camera Follow** on Main Camera stays behind the head and looks ahead, the same chase view as [Worms Clash](https://www.youtube.com/shorts/At-NQvdMjKQ). **Yaw Sharpness** eases the camera around a turn so the head leads slightly. Turn off **Start In Playing** on `GameConfig` when a menu should wait for a start action.
+4. Steer with WASD, the arrow keys, or the bottom-left stick. Release the input and the snake continues on its current heading. **Snake Camera Rig** drives a Cinemachine third-person camera. Turn off **Start In Playing** on `GameConfig` when a menu should wait for a start action.
 
 Prefab hierarchy:
 
@@ -84,12 +85,90 @@ Inspector values on the prefab:
 | Head mesh | Rotation | 90° on X, so the capsule lies along the heading |
 | Snake Movement | Config | `Assets/_Game/Data/SnakeMovementConfig.asset` |
 | Snake Movement | Lock Planar Height | on |
-| Snake Controller | Steer Action | empty (WASD, arrows, and left stick) |
+| Snake Controller | Controls | `Assets/_Game/Input/SnakeControls.inputactions` |
+| Snake Controller | Steer Action | empty. Assign only to replace Controls |
 | Snake Controller | View Camera | empty (uses Main Camera) |
 | Snake Controller | Control Enabled | on, until the session link limits it to Playing |
 | Head Capsule Collider | Radius / Height | 0.5 / 2 |
 
 `SnakeMovementConfig` defaults: forward speed 6, max turn 140 degrees per second, deadzone 0.15, camera-relative steering on. The wider turn keeps the head from curling back through the neck.
+
+## Camera
+
+`Bootstrap` has **Snake Camera Rig**. On Play it adds a Cinemachine Brain to Main Camera and a **Snake Third Person** virtual camera. **Snake Camera Follow** on Main Camera stays disabled so the two cameras do not fight.
+
+The brain updates in LateUpdate. The head moves in Update, so a Smart Update brain would sample the kinematic Rigidbody in FixedUpdate and jitter.
+
+The rig copies the head position onto **Camera Yaw** and eases that proxy's rotation. Third Person Follow orbits the proxy, which is what makes the turn smooth. **Yaw Sharpness** is that ease. Lower values let the head lead the turn.
+
+| Field | Default | What it changes |
+| --- | --- | --- |
+| Target | Snake head | Follow and look target |
+| Output Camera | Main Camera | Receives the brain |
+| Camera Distance | 9 | Distance behind the head |
+| Camera Height | 7 | Height above the head |
+| Max Camera Distance | 16 | Distance at full zoom-out |
+| Max Camera Height | 12 | Height at full zoom-out |
+| Segments For Full Zoom | 40 | Body length that reaches the maximums |
+| Zoom Smooth Time | 0.6 | How long a length change takes to settle |
+| Yaw Sharpness | 5 | How fast the camera swings behind a turn |
+| Position Damping | (0.05, 0.1, 0.05) | Catch-up time in seconds. Keep this small |
+| Aim Damping | (0.25, 0.2) | How fast the look direction settles |
+| Look Ahead | 6 | Metres in front of the head that stay in frame |
+| Screen Y | 0.12 | Tips the view down so the ground ahead stays visible |
+
+Change distance, height, and zoom on **Snake Camera Rig**. The rig writes those onto the generated Third Person Follow every frame.
+
+Main Camera field of view stays 68. The virtual camera copies it.
+
+## Mobile controls
+
+`Assets/_Game/Input/SnakeControls.inputactions` is the steer asset. **Snake Controller** on the head uses **Player / Steer**.
+
+Open the asset and confirm this setup. Do not add a Player Input component. Without one, every binding stays live, so the keyboard and the stick work at the same time. The action uses whichever binding has the larger magnitude. A centered stick does not cancel WASD.
+
+Action map **Player**:
+
+| Action | Type | Control Type | Initial State Check |
+| --- | --- | --- | --- |
+| Steer | Value | Vector2 | on |
+
+Bindings on **Steer**:
+
+| Name | Path | Composite | Group | Processors |
+| --- | --- | --- | --- | --- |
+| WASD | 2DVector | composite | Keyboard&Mouse | |
+| up | `<Keyboard>/w` | part of WASD | Keyboard&Mouse | |
+| down | `<Keyboard>/s` | part of WASD | Keyboard&Mouse | |
+| left | `<Keyboard>/a` | part of WASD | Keyboard&Mouse | |
+| right | `<Keyboard>/d` | part of WASD | Keyboard&Mouse | |
+| Arrows | 2DVector | composite | Keyboard&Mouse | |
+| up | `<Keyboard>/upArrow` | part of Arrows | Keyboard&Mouse | |
+| down | `<Keyboard>/downArrow` | part of Arrows | Keyboard&Mouse | |
+| left | `<Keyboard>/leftArrow` | part of Arrows | Keyboard&Mouse | |
+| right | `<Keyboard>/rightArrow` | part of Arrows | Keyboard&Mouse | |
+| | `<Gamepad>/leftStick` | binding | Gamepad | `stickDeadzone(min=0.15,max=0.925)` |
+
+Control schemes, for the Input Actions window only:
+
+| Scheme | Binding Group | Device |
+| --- | --- | --- |
+| Keyboard&Mouse | Keyboard&Mouse | Keyboard, Mouse optional |
+| Gamepad | Gamepad | Gamepad |
+| Touch | Touch | Touchscreen |
+
+The on-screen stick does not have its own action. It feeds `<Gamepad>/leftStick`, which is the binding above. Android and iOS touches are read by that stick. Project Settings **Active Input Handling** stays **Input System Package**.
+
+**Mobile Controls** builds the joystick on Play:
+
+1. Select **Mobile Controls**.
+2. **Control Path** is `<Gamepad>/leftStick`.
+3. **Movement Range** is 80. **Stick Size** is 180. **Screen Margin** is 56.
+4. **Canvas Sorting Order** is 5.
+5. Press Play. The Hierarchy gains **Mobile Controls Canvas**, **EventSystem**, and **Input System UI Input Module**. The module fills its default UI actions on enable.
+6. Drag the stick with the mouse in the Editor, or with a finger on a device. WASD and the arrows still steer when the stick is centered.
+
+The canvas has no full-screen image. Only the stick graphic receives pointers, so a button outside that corner still clicks. Put gameplay buttons on a Canvas with **Sort Order** above 5, and keep them out of the bottom-left stick. If a button must overlap the stick, the higher canvas wins and the stick ignores that touch.
 
 ## Snake body
 
@@ -114,7 +193,7 @@ Segments are not parented to the head or to each other. Each one is sampled at a
 | Path Sample Spacing | 0.05 | How often a point is stored. Lower values follow tighter turns. |
 | Pool Capacity | 80 | Inactive instances kept for reuse. Raised automatically when the start length is larger. |
 
-The follow camera sits close to the head, so only the front of a 50-segment body is in frame. To see more of the trail, select Main Camera and raise **Follow Offset**, for example `(0, 28, -24)`.
+The camera starts close to the head and moves out as the body grows. Select **Snake Camera Rig** and raise **Max Camera Distance** and **Max Camera Height** to see more of a long trail. **Segments For Full Zoom** is the length that reaches those maximums.
 
 Manual wiring, if the controller is missing from a head:
 

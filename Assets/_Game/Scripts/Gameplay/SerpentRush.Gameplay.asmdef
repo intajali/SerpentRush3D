@@ -3,7 +3,8 @@
     "rootNamespace": "SerpentRush.Gameplay",
     "references": [
         "SerpentRush.Core",
-        "Unity.InputSystem"
+        "Unity.InputSystem",
+        "Unity.Cinemachine"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

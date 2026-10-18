@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using SerpentRush.Gameplay;
 using SerpentRush.Managers;
+using SerpentRush.UI;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -128,16 +129,32 @@ namespace SerpentRush.EditorTools
             if (view != null)
             {
                 var follow = view.GetComponent<SnakeCameraFollow>();
-                if (follow == null)
-                    follow = Undo.AddComponent<SnakeCameraFollow>(view.gameObject);
+                if (follow != null)
+                    follow.enabled = false;
+            }
 
-                var followObject = new SerializedObject(follow);
-                var targetProperty = followObject.FindProperty("_target");
-                if (targetProperty != null)
-                {
-                    targetProperty.objectReferenceValue = snakeObject.transform;
-                    followObject.ApplyModifiedPropertiesWithoutUndo();
-                }
+            var rig = Object.FindAnyObjectByType<SnakeCinemachineRig>();
+            if (rig == null)
+            {
+                var rigObject = new GameObject("Snake Camera Rig");
+                Undo.RegisterCreatedObjectUndo(rigObject, "Add Snake Camera Rig");
+                rig = Undo.AddComponent<SnakeCinemachineRig>(rigObject);
+            }
+
+            var rigSerialized = new SerializedObject(rig);
+            var rigTarget = rigSerialized.FindProperty("_target");
+            if (rigTarget != null)
+                rigTarget.objectReferenceValue = snakeObject.transform;
+            var rigCamera = rigSerialized.FindProperty("_outputCamera");
+            if (rigCamera != null && view != null)
+                rigCamera.objectReferenceValue = view;
+            rigSerialized.ApplyModifiedPropertiesWithoutUndo();
+
+            if (Object.FindAnyObjectByType<MobileSteerOverlay>() == null)
+            {
+                var controls = new GameObject("Mobile Controls");
+                Undo.RegisterCreatedObjectUndo(controls, "Add Mobile Controls");
+                Undo.AddComponent<MobileSteerOverlay>(controls);
             }
 
             var manager = Object.FindAnyObjectByType<GameManager>();
@@ -158,7 +175,7 @@ namespace SerpentRush.EditorTools
 
             EditorSceneManager.MarkSceneDirty(snakeObject.scene);
             Selection.activeGameObject = snakeObject;
-            Debug.Log("[SerpentRush] Snake head is in the scene. Press Play, then steer with WASD or the arrow keys.");
+            Debug.Log("[SerpentRush] Snake head is in the scene. Press Play, then steer with WASD, the arrow keys, or the on-screen stick.");
         }
 
         static void EnsureBootstrapIsFirstBuildScene()
