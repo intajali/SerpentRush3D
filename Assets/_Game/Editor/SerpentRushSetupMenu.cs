@@ -157,6 +157,13 @@ namespace SerpentRush.EditorTools
                 Undo.AddComponent<MobileSteerOverlay>(controls);
             }
 
+            if (Object.FindAnyObjectByType<RunHud>() == null)
+            {
+                var hud = new GameObject("Game HUD");
+                Undo.RegisterCreatedObjectUndo(hud, "Add Game HUD");
+                Undo.AddComponent<RunHud>(hud);
+            }
+
             var manager = Object.FindAnyObjectByType<GameManager>();
             if (manager != null)
             {

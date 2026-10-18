@@ -29,6 +29,7 @@ namespace SerpentRush.UI
         [SerializeField] bool _visible = true;
 
         RectTransform _well;
+        GameObject _canvasObject;
 
         void Awake()
         {
@@ -42,6 +43,12 @@ namespace SerpentRush.UI
         void Start()
         {
             ApplySafeArea();
+        }
+
+        void OnDestroy()
+        {
+            if (_canvasObject != null)
+                Destroy(_canvasObject);
         }
 
         void EnsureEventSystem()
@@ -61,20 +68,19 @@ namespace SerpentRush.UI
 
         void Build()
         {
-            var canvasObject = new GameObject("Mobile Controls Canvas", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
-            canvasObject.transform.SetParent(transform, false);
+            _canvasObject = new GameObject("Mobile Controls Canvas", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
 
-            var canvas = canvasObject.GetComponent<Canvas>();
+            var canvas = _canvasObject.GetComponent<Canvas>();
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
             canvas.sortingOrder = _canvasSortingOrder;
             canvas.pixelPerfect = false;
 
-            var scaler = canvasObject.GetComponent<CanvasScaler>();
+            var scaler = _canvasObject.GetComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
             scaler.referenceResolution = new Vector2(1920f, 1080f);
             scaler.matchWidthOrHeight = 0.5f;
 
-            var canvasRect = (RectTransform)canvasObject.transform;
+            var canvasRect = (RectTransform)_canvasObject.transform;
             canvasRect.anchorMin = Vector2.zero;
             canvasRect.anchorMax = Vector2.one;
             canvasRect.offsetMin = Vector2.zero;
@@ -88,9 +94,9 @@ namespace SerpentRush.UI
             _well.sizeDelta = new Vector2(wellSize, wellSize);
             _well.anchoredPosition = new Vector2(_screenMargin + (wellSize * 0.5f), _screenMargin + (wellSize * 0.5f));
 
-            var baseDisc = CreateImage("Base", _well, Disc(), new Color(1f, 1f, 1f, 0.16f), false);
+            var baseDisc = CreateImage("Base", _well, Disc(), new Color(0.05f, 0.08f, 0.12f, 0.78f), false);
             PlaceCentered(baseDisc.rectTransform, _stickSize);
-            var ring = CreateImage("Ring", _well, Ring(), new Color(1f, 1f, 1f, 0.85f), false);
+            var ring = CreateImage("Ring", _well, Ring(), new Color(1f, 1f, 1f, 0.95f), false);
             PlaceCentered(ring.rectTransform, _stickSize);
 
             var stickObject = new GameObject("Stick", typeof(RectTransform), typeof(Image));
@@ -102,9 +108,16 @@ namespace SerpentRush.UI
             stickImage.sprite = Disc();
             stickImage.color = new Color(1f, 1f, 1f, 0f);
             stickImage.raycastTarget = true;
-            stickImage.alphaHitTestMinimumThreshold = 0.5f;
+            try
+            {
+                stickImage.alphaHitTestMinimumThreshold = 0.5f;
+            }
+            catch (System.Exception)
+            {
+                stickImage.alphaHitTestMinimumThreshold = 0f;
+            }
 
-            var knob = CreateImage("Handle", stickRect, Disc(), new Color(1f, 1f, 1f, 0.95f), false);
+            var knob = CreateImage("Handle", stickRect, Disc(), new Color(0.45f, 0.92f, 1f, 1f), false);
             PlaceCentered(knob.rectTransform, _stickSize * 0.42f);
 
             stickObject.SetActive(false);

@@ -11,13 +11,13 @@ TagManager:
   - 
   - Water
   - UI
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - PlayerHead
+  - PlayerBody
+  - Obstacle
+  - Hazard
+  - EnemyHead
+  - EnemyBody
+  - Collectable
   - 
   - 
   - 

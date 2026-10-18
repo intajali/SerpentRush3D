@@ -17,6 +17,8 @@ namespace SerpentRush.Managers
 
         IEventBus _events;
         SnakeGrowthController _growth;
+        SnakeHealth _health;
+        SnakeMovement _movement;
         bool _subscribed;
 
         void Start()
@@ -37,6 +39,9 @@ namespace SerpentRush.Managers
 
             _growth = _snake.GetComponent<SnakeGrowthController>();
             _growth?.Bind(_events);
+            _health = _snake.GetComponent<SnakeHealth>();
+            _health?.Bind(_events);
+            _movement = _snake.GetComponent<SnakeMovement>();
 
             _events.Subscribe<GameStateChanged>(OnStateChanged);
             _subscribed = true;
@@ -55,14 +60,20 @@ namespace SerpentRush.Managers
         void OnStateChanged(GameStateChanged change)
         {
             if (change.Current == GameStateId.Playing && change.Previous != GameStateId.Paused)
+            {
                 _growth?.ResetRun();
+                _health?.ResetRun();
+                _movement?.ResetRun();
+            }
 
             Apply(change.Current);
         }
 
         void Apply(GameStateId state)
         {
-            _snake.SetControlEnabled(state == GameStateId.Playing);
+            bool playing = state == GameStateId.Playing;
+            _snake.SetControlEnabled(playing);
+            _health?.SetAcceptingHits(playing);
         }
     }
 }

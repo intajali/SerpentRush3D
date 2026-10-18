@@ -106,14 +106,26 @@ namespace SerpentRush.Gameplay
         [ContextMenu("Remove Body Segment")]
         public void RemoveSegment()
         {
-            if (!_ready || _segments.Count == 0)
-                return;
+            RemoveSegments(1);
+        }
 
-            int last = _segments.Count - 1;
-            var segment = _segments[last];
-            _segments.RemoveAt(last);
-            _pool.Release(segment.gameObject);
+        public int RemoveSegments(int count)
+        {
+            if (!_ready || count <= 0 || _pool == null)
+                return 0;
+
+            int removed = 0;
+            while (removed < count && _segments.Count > 0)
+            {
+                int last = _segments.Count - 1;
+                var segment = _segments[last];
+                _segments.RemoveAt(last);
+                _pool.Release(segment.gameObject);
+                removed++;
+            }
+
             _path.RetainDistance = RetainFor(TailDistance(_segments.Count));
+            return removed;
         }
 
         SnakeSegment SpawnAt(int index)

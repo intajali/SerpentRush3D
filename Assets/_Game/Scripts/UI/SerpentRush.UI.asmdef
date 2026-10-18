@@ -3,6 +3,7 @@
     "rootNamespace": "SerpentRush.UI",
     "references": [
         "SerpentRush.Core",
+        "SerpentRush.Gameplay",
         "Unity.InputSystem",
         "UnityEngine.UI"
     ],

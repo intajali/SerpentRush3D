@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 420002}
   - component: {fileID: 420003}
   - component: {fileID: 420008}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: EnergyOrb
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -15,15 +15,35 @@ namespace SerpentRush.Gameplay
         [SerializeField] bool _lockPlanarHeight = true;
 
         float _lockedHeight;
+        float _runStartTime;
         bool _reportedMissingConfig;
         Rigidbody _rigidbody;
 
         public ISnakeMovementConfig Config => _config;
 
+        public float CurrentSpeed
+        {
+            get
+            {
+                if (_config == null)
+                    return 0f;
+
+                float elapsed = Mathf.Max(0f, Time.time - _runStartTime);
+                float speed = _config.ForwardSpeed + (elapsed * _config.SpeedIncreasePerSecond);
+                return Mathf.Min(speed, _config.MaxForwardSpeed);
+            }
+        }
+
         void Awake()
         {
             _lockedHeight = transform.position.y;
+            _runStartTime = Time.time;
             _rigidbody = GetComponent<Rigidbody>();
+        }
+
+        public void ResetRun()
+        {
+            _runStartTime = Time.time;
         }
 
         public void Tick(Vector3 desiredDirection, float deltaTime)
@@ -66,7 +86,7 @@ namespace SerpentRush.Gameplay
                 transform.rotation = Quaternion.LookRotation(facing, Vector3.up);
             }
 
-            var position = transform.position + facing * (_config.ForwardSpeed * deltaTime);
+            var position = transform.position + facing * (CurrentSpeed * deltaTime);
             if (_lockPlanarHeight)
                 position.y = _lockedHeight;
 

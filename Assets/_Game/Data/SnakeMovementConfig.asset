@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: SnakeMovementConfig
   m_EditorClassIdentifier: 
   _forwardSpeed: 20
+  _speedIncreasePerSecond: 0.5
+  _maxForwardSpeed: 40
   _maxTurnDegreesPerSecond: 140
   _inputDeadzone: 0.15
   _cameraRelativeSteering: 1

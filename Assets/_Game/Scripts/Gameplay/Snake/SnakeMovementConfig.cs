@@ -8,8 +8,14 @@ namespace SerpentRush.Gameplay
     [CreateAssetMenu(fileName = "SnakeMovementConfig", menuName = "Serpent Rush/Snake Movement Config")]
     public sealed class SnakeMovementConfig : ScriptableObject, ISnakeMovementConfig
     {
-        [Tooltip("World units travelled per second along the facing direction.")]
+        [Tooltip("World units travelled per second at the start of a run.")]
         [SerializeField, Min(0f)] float _forwardSpeed = 6f;
+
+        [Tooltip("Added to forward speed for each second the run has been playing. Pause time is not counted.")]
+        [SerializeField, Min(0f)] float _speedIncreasePerSecond = 0.5f;
+
+        [Tooltip("Forward speed stops increasing at this value.")]
+        [SerializeField, Min(0f)] float _maxForwardSpeed = 40f;
 
         [Tooltip("Fastest heading change, in degrees per second. About 140 at speed 6 bends in a wide arc so the head stays clear of the body.")]
         [SerializeField, Min(1f)] float _maxTurnDegreesPerSecond = 140f;
@@ -22,6 +28,10 @@ namespace SerpentRush.Gameplay
 
         public float ForwardSpeed => _forwardSpeed;
 
+        public float SpeedIncreasePerSecond => _speedIncreasePerSecond;
+
+        public float MaxForwardSpeed => Mathf.Max(_forwardSpeed, _maxForwardSpeed);
+
         public float MaxTurnDegreesPerSecond => _maxTurnDegreesPerSecond;
 
         public float InputDeadzone => _inputDeadzone;
@@ -31,6 +41,8 @@ namespace SerpentRush.Gameplay
         void OnValidate()
         {
             _forwardSpeed = Mathf.Max(0f, _forwardSpeed);
+            _speedIncreasePerSecond = Mathf.Max(0f, _speedIncreasePerSecond);
+            _maxForwardSpeed = Mathf.Max(_forwardSpeed, _maxForwardSpeed);
             _maxTurnDegreesPerSecond = Mathf.Max(1f, _maxTurnDegreesPerSecond);
             _inputDeadzone = Mathf.Clamp(_inputDeadzone, 0f, 0.95f);
         }
