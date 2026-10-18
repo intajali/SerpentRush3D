@@ -5,7 +5,7 @@ namespace SerpentRush.Gameplay
 {
     /// <summary>
     /// Third-person Cinemachine camera behind the snake head.
-    /// A yaw proxy eases rotation. Position is copied exactly, and the brain updates in LateUpdate.
+    /// The yaw proxy glides in position and trails the heading, so the view eases through turns.
     /// </summary>
     [DisallowMultipleComponent]
     [DefaultExecutionOrder(-200)]
@@ -21,40 +21,48 @@ namespace SerpentRush.Gameplay
         [SerializeField] Camera _outputCamera;
 
         [Tooltip("Distance behind the head at the starting length.")]
-        [SerializeField, Min(0.5f)] float _cameraDistance = 9f;
+        [SerializeField, Min(0.5f)] float _cameraDistance = 13f;
 
         [Tooltip("Height above the head at the starting length. Maps to Third Person Follow Vertical Arm Length.")]
-        [SerializeField, Min(0f)] float _cameraHeight = 7f;
+        [SerializeField, Min(0f)] float _cameraHeight = 10f;
 
         [Tooltip("Distance when the body reaches Segments For Full Zoom.")]
-        [SerializeField, Min(0.5f)] float _maxCameraDistance = 16f;
+        [SerializeField, Min(0.5f)] float _maxCameraDistance = 18f;
 
         [Tooltip("Height when the body reaches Segments For Full Zoom.")]
-        [SerializeField, Min(0f)] float _maxCameraHeight = 12f;
+        [SerializeField, Min(0f)] float _maxCameraHeight = 14f;
+
+        [Tooltip("Extra distance added as forward speed rises from the start value to the cap.")]
+        [SerializeField, Min(0f)] float _speedDistanceBonus = 5f;
+
+        [Tooltip("Extra height added as forward speed rises from the start value to the cap.")]
+        [SerializeField, Min(0f)] float _speedHeightBonus = 2.5f;
 
         [SerializeField, Min(1)] int _segmentsForFullZoom = 40;
 
         [SerializeField, Min(0.01f)] float _zoomSmoothTime = 0.6f;
 
         [Tooltip("How quickly the camera swings behind a turn. Lower values let the head lead.")]
-        [SerializeField, Min(0f)] float _yawSharpness = 5f;
+        [SerializeField, Min(0f)] float _yawSharpness = 3.2f;
 
-        [Tooltip("Seconds for the camera to catch the proxy. Kept small so the view does not lag or jitter.")]
-        [SerializeField] Vector3 _positionDamping = new Vector3(0.05f, 0.1f, 0.05f);
+        [Tooltip("Seconds for the follow point to catch the head. This is the glide. Cinemachine damping stays off so it is not filtered twice.")]
+        [SerializeField, Min(0f)] float _positionSmoothTime = 0.12f;
 
-        [Tooltip("Seconds for the aim to settle. X is horizontal, Y is vertical.")]
-        [SerializeField] Vector2 _aimDamping = new Vector2(0.25f, 0.2f);
+        [Tooltip("Seconds for the aim to settle. Kept tiny so the look does not swim against the turn.")]
+        [SerializeField] Vector2 _aimDamping = new Vector2(0.05f, 0.04f);
 
-        [Tooltip("How far ahead of the head the camera looks, in the smoothed heading. Shows the path and nearby threats.")]
-        [SerializeField, Min(0f)] float _lookAhead = 6f;
+        [Tooltip("How far ahead of the follow point the camera looks, in the smoothed heading.")]
+        [SerializeField, Min(0f)] float _lookAhead = 8f;
 
         [Tooltip("Where the aim point sits on screen. 0 is center. Positive tips the view down onto the ground ahead.")]
-        [SerializeField, Range(-0.4f, 0.4f)] float _screenY = 0.12f;
+        [SerializeField, Range(-0.4f, 0.4f)] float _screenY = 0.06f;
 
         Transform _yaw;
+        SnakeMovement _movement;
         CinemachineCamera _virtualCamera;
         CinemachineThirdPersonFollow _follow;
         CinemachineRotationComposer _aim;
+        Vector3 _followVelocity;
         float _smoothedDistance;
         float _smoothedHeight;
         float _distanceVelocity;
@@ -92,6 +100,9 @@ namespace SerpentRush.Gameplay
 
             if (_body == null && _target != null)
                 _body = _target.GetComponent<SnakeBodyController>();
+
+            if (_movement == null && _target != null)
+                _movement = _target.GetComponent<SnakeMovement>();
 
             if (_outputCamera == null)
                 _outputCamera = Camera.main;
@@ -142,6 +153,7 @@ namespace SerpentRush.Gameplay
 
             _follow.CameraSide = 0.5f;
             _follow.ShoulderOffset = Vector3.zero;
+            _follow.Damping = Vector3.zero;
 
             _aim.CenterOnActivate = true;
             _aim.Lookahead = new LookaheadSettings { Enabled = false };
@@ -153,7 +165,19 @@ namespace SerpentRush.Gameplay
 
         void TrackYaw()
         {
-            _yaw.position = _target.position;
+            if (!_hasYaw || _positionSmoothTime <= 0f)
+            {
+                _yaw.position = _target.position;
+                _followVelocity = Vector3.zero;
+            }
+            else
+            {
+                _yaw.position = Vector3.SmoothDamp(
+                    _yaw.position,
+                    _target.position,
+                    ref _followVelocity,
+                    _positionSmoothTime);
+            }
 
             var facing = SteerAim.Planar(_target.forward);
             if (facing.sqrMagnitude < 0.0001f)
@@ -192,10 +216,7 @@ namespace SerpentRush.Gameplay
 
             _follow.CameraDistance = _smoothedDistance;
             _follow.VerticalArmLength = _smoothedHeight;
-            _follow.Damping = new Vector3(
-                Mathf.Max(0f, _positionDamping.x),
-                Mathf.Max(0f, _positionDamping.y),
-                Mathf.Max(0f, _positionDamping.z));
+            _follow.Damping = Vector3.zero;
         }
 
         void ApplyFraming()
@@ -210,12 +231,27 @@ namespace SerpentRush.Gameplay
 
         float TargetDistance()
         {
-            return Mathf.Lerp(_cameraDistance, Mathf.Max(_cameraDistance, _maxCameraDistance), Zoom01());
+            float distance = Mathf.Lerp(_cameraDistance, Mathf.Max(_cameraDistance, _maxCameraDistance), Zoom01());
+            return distance + (_speedDistanceBonus * Speed01());
         }
 
         float TargetHeight()
         {
-            return Mathf.Lerp(_cameraHeight, Mathf.Max(_cameraHeight, _maxCameraHeight), Zoom01());
+            float height = Mathf.Lerp(_cameraHeight, Mathf.Max(_cameraHeight, _maxCameraHeight), Zoom01());
+            return height + (_speedHeightBonus * Speed01());
+        }
+
+        float Speed01()
+        {
+            if (_movement == null || _movement.Config == null)
+                return 0f;
+
+            float start = _movement.Config.ForwardSpeed;
+            float limit = _movement.Config.MaxForwardSpeed;
+            if (limit <= start + 0.01f)
+                return 0f;
+
+            return Mathf.Clamp01((_movement.CurrentSpeed - start) / (limit - start));
         }
 
         float Zoom01()

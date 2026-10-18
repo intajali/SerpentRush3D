@@ -764,17 +764,19 @@ MonoBehaviour:
   _target: {fileID: 693683621}
   _body: {fileID: 0}
   _outputCamera: {fileID: 1641775776}
-  _cameraDistance: 9
-  _cameraHeight: 7
-  _maxCameraDistance: 16
-  _maxCameraHeight: 12
+  _cameraDistance: 13
+  _cameraHeight: 10
+  _maxCameraDistance: 18
+  _maxCameraHeight: 14
+  _speedDistanceBonus: 5
+  _speedHeightBonus: 2.5
   _segmentsForFullZoom: 40
-  _zoomSmoothTime: 0.6
-  _yawSharpness: 5
-  _positionDamping: {x: 0.05, y: 0.1, z: 0.05}
-  _aimDamping: {x: 0.25, y: 0.2}
-  _lookAhead: 6
-  _screenY: 0.12
+  _zoomSmoothTime: 0.8
+  _yawSharpness: 3.2
+  _positionSmoothTime: 0.12
+  _aimDamping: {x: 0.05, y: 0.04}
+  _lookAhead: 8
+  _screenY: 0.06
 --- !u!1 &910200001
 GameObject:
   m_ObjectHideFlags: 0
