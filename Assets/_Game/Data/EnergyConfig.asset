@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4be7634e2b19a15a7f022ae5a23fb82, type: 3}
+  m_Name: EnergyConfig
+  m_EditorClassIdentifier: 
+  _commonValue: 1
+  _rareValue: 5
+  _epicValue: 10
+  _growthThreshold: 5
+  _commonDiameter: 0.7
+  _rareDiameter: 0.95
+  _epicDiameter: 1.2
+  _commonColor: {r: 0.95, g: 0.82, b: 0.2, a: 1}
+  _rareColor: {r: 0.25, g: 0.75, b: 1, a: 1}
+  _epicColor: {r: 0.72, g: 0.28, b: 1, a: 1}
+  _commonWeight: 70
+  _rareWeight: 25
+  _epicWeight: 5
+  _activeCount: 18
+  _spawnHalfExtent: 18
+  _spawnHeight: 0.55
+  _minimumSpacing: 2.5
+  _clearanceFromSnake: 4
+  _feedbackDuration: 0.22
+  _poolCapacity: 32

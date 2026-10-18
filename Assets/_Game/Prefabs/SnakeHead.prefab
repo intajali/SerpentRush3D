@@ -9,9 +9,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 400002}
+  - component: {fileID: 400007}
   - component: {fileID: 400003}
   - component: {fileID: 400004}
   - component: {fileID: 400005}
+  - component: {fileID: 400006}
   m_Layer: 0
   m_Name: SnakeHead
   m_TagString: Untagged
@@ -79,6 +81,47 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _config: {fileID: 11400000, guid: b3e0a6b444185f5ebb9183a359ef080e, type: 2}
   _segmentPrefab: {fileID: 410006, guid: 57ad1282feea1efe7678455477632dfc, type: 3}
+--- !u!114 &400006
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 400001}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31a93f8c929f95daad06c0423e9524d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _body: {fileID: 400005}
+  _config: {fileID: 11400000, guid: b174fddfaa434671454e7bb2d9e2b24d, type: 2}
+--- !u!54 &400007
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 400001}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 3
 --- !u!1 &400011
 GameObject:
   m_ObjectHideFlags: 0

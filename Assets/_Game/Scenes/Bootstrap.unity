@@ -323,7 +323,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 60
+  field of view: 68
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -369,10 +369,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _target: {fileID: 693683621}
-  _followOffset: {x: 0, y: 8, z: -10}
-  _positionSharpness: 4
-  _lookSharpness: 8
-  _headingDelay: 0.45
+  _followOffset: {x: 0, y: 12, z: -8}
+  _lookAhead: 10
+  _positionSharpness: 10
+  _lookSharpness: 14
+  _yawSharpness: 7
   _orbitWithHeading: 1
 --- !u!114 &1641775779
 MonoBehaviour:
@@ -551,6 +552,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: SerpentRush.Managers::SerpentRush.Managers.SnakeSessionLink
   _snake: {fileID: 693683620}
+--- !u!114 &693683622 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 400006, guid: c57a2764ac183fb6a27e5c7819526475, type: 3}
+  m_PrefabInstance: {fileID: 2030882775}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31a93f8c929f95daad06c0423e9524d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &812440001
 GameObject:
   m_ObjectHideFlags: 0
@@ -657,6 +669,54 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &825500001
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 825500002}
+  - component: {fileID: 825500003}
+  m_Layer: 0
+  m_Name: Energy Spawner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &825500002
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 825500001}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &825500003
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 825500001}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c696b0a283957ea15bd98f6dab811baf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _config: {fileID: 11400000, guid: b174fddfaa434671454e7bb2d9e2b24d, type: 2}
+  _prefab: {fileID: 420008, guid: 1a5372945c69f717fb2a008a400d02ba, type: 3}
+  _growth: {fileID: 693683622}
+  _snake: {fileID: 693683621}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -666,3 +726,4 @@ SceneRoots:
   - {fileID: 2071145309}
   - {fileID: 2030882775}
   - {fileID: 812440002}
+  - {fileID: 825500002}

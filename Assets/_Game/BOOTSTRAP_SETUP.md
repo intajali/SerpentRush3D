@@ -66,7 +66,7 @@ Subscribe to `GameStateChanged` from `OnEnable` or `Start` on the bus stored in 
 1. Let the Editor import `com.unity.inputsystem` from `Packages/manifest.json`.
 2. Run **Serpent Rush > Setup > Place Snake Head**. This instances `Assets/_Game/Prefabs/SnakeHead.prefab` and, when `Game` is in the scene, adds **Snake Session Link** on `Game` with the head assigned.
 3. Press Play. The session enters Playing on its own, and the head starts moving forward.
-4. Steer with WASD or the arrow keys. Release the keys and it continues on its current heading. **Snake Camera Follow** on Main Camera stays behind the head, and **Heading Delay** (0.45 seconds) lets the snake turn before the camera swings around. Turn off **Start In Playing** on `GameConfig` when a menu should wait for a start action.
+4. Steer with WASD or the arrow keys. Release the keys and it continues on its current heading. **Snake Camera Follow** on Main Camera stays behind the head and looks ahead, the same chase view as [Worms Clash](https://www.youtube.com/shorts/At-NQvdMjKQ). **Yaw Sharpness** eases the camera around a turn so the head leads slightly. Turn off **Start In Playing** on `GameConfig` when a menu should wait for a start action.
 
 Prefab hierarchy:
 
@@ -123,3 +123,25 @@ Manual wiring, if the controller is missing from a head:
 3. On the same object as **Snake Movement**, add **Snake Body Controller**.
 4. Assign the config and the segment prefab.
 5. Leave the segment unparented in the scene. The controller pools instances at runtime.
+
+## Energy
+
+Orbs are pooled and grow the snake during the current run. Nothing is saved.
+
+`Bootstrap` contains `Energy Spawner`. It uses `Assets/_Game/Data/EnergyConfig.asset` and `Assets/_Game/Prefabs/EnergyOrb.prefab`. `SnakeHead` has **Snake Growth Controller** and a kinematic Rigidbody so the head can trip the orb triggers. Body segments still have no Rigidbody.
+
+1. Let the Editor import, then open `Bootstrap`.
+2. Press Play. Yellow, blue, and purple orbs appear on the ground. They bob in place.
+3. Steer into an orb. It flashes white, pops, and shrinks, then returns to the pool. A new orb appears elsewhere.
+4. Energy is kept for this run. Every 5 points, **Snake Growth Controller** calls `SnakeBodyController` and adds one segment. A rare orb is 5 points, so it grows the snake immediately. An epic orb is 10 points, so it adds two segments.
+5. Pause and resume keeps the energy. Starting a new run from the menu or game over clears it.
+
+| Energy | Default points | Look |
+| --- | --- | --- |
+| Common | 1 | Small yellow orb |
+| Rare | 5 | Medium blue orb |
+| Epic | 10 | Large purple orb |
+
+Change the points, growth threshold, colors, sizes, and spawn weights on `EnergyConfig`. **Active Count** is how many orbs stay in the arena.
+
+UI can subscribe to `EnergyChanged` on `GameManager.Events`. The payload has `TotalEnergy`, `AmountGained`, `GrowthProgress`, `GrowthThreshold`, `SegmentsGained`, and `Source`. `SnakeGrowthController.Changed` raises the same payload directly.

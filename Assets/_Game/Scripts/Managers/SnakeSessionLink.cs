@@ -16,6 +16,7 @@ namespace SerpentRush.Managers
         [SerializeField] SnakeController _snake;
 
         IEventBus _events;
+        SnakeGrowthController _growth;
         bool _subscribed;
 
         void Start()
@@ -34,6 +35,9 @@ namespace SerpentRush.Managers
                 return;
             }
 
+            _growth = _snake.GetComponent<SnakeGrowthController>();
+            _growth?.Bind(_events);
+
             _events.Subscribe<GameStateChanged>(OnStateChanged);
             _subscribed = true;
             Apply(manager.CurrentStateId);
@@ -50,6 +54,9 @@ namespace SerpentRush.Managers
 
         void OnStateChanged(GameStateChanged change)
         {
+            if (change.Current == GameStateId.Playing && change.Previous != GameStateId.Paused)
+                _growth?.ResetRun();
+
             Apply(change.Current);
         }
 

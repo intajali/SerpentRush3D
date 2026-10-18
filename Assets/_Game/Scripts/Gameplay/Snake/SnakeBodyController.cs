@@ -87,14 +87,20 @@ namespace SerpentRush.Gameplay
         [ContextMenu("Add Body Segment")]
         public void AddSegment()
         {
+            TryAddSegment();
+        }
+
+        public bool TryAddSegment()
+        {
             if (!EnsureReady())
-                return;
+                return false;
 
             int index = _segments.Count;
             float tail = TailDistance(index + 1);
             _path.RetainDistance = RetainFor(tail);
             _path.EnsureSpan(tail);
             _segments.Add(SpawnAt(index));
+            return true;
         }
 
         [ContextMenu("Remove Body Segment")]

@@ -16,12 +16,14 @@ namespace SerpentRush.Gameplay
 
         float _lockedHeight;
         bool _reportedMissingConfig;
+        Rigidbody _rigidbody;
 
         public ISnakeMovementConfig Config => _config;
 
         void Awake()
         {
             _lockedHeight = transform.position.y;
+            _rigidbody = GetComponent<Rigidbody>();
         }
 
         public void Tick(Vector3 desiredDirection, float deltaTime)
@@ -68,7 +70,15 @@ namespace SerpentRush.Gameplay
             if (_lockPlanarHeight)
                 position.y = _lockedHeight;
 
-            transform.position = position;
+            if (_rigidbody != null && _rigidbody.isKinematic)
+            {
+                _rigidbody.rotation = transform.rotation;
+                _rigidbody.position = position;
+            }
+            else
+            {
+                transform.position = position;
+            }
         }
     }
 }
